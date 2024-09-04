@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Game</title>
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+                border: 8px;
+            }
+            button {
+                margin: 10px;
+                width: 75px;
+                height: 45px;
+            }
+            .text {
+                resize: none;
+                margin-left: 31px;
+                margin-right: 22px;
+                height: 36px;
+                width: 96px;
+            }
+            
+        </style>
+    </head>
+    <body id="body">
+        <div id="start" style="display: block;">  
+        <button id="startButton">Click to start!</button>
+        <label>operation:</label>
+        <select id="operation">
+            <optgroup label="Operations">
+                <option value="0">Addition</option>
+                <option value="1">Subtraction w/ Negatives</option>
+                <option value="2">Subtraction</option>
+                <option value="3">Multiplication</option>
+            </optgroup>
+            <!--<optgroup label="Test Operations 
+                            (May Not Work Properly)">
+            </optgroup> -->
+        </select>
+        <br>
+        <input class="text" id="min" placeholder="Range min" rows="2" cols="10" type="number"></input>
+        <input class="text" id="max" placeholder="Range max" rows="2" cols="10" type="number"></input>
+        </div>
+        <div id="main" style="display: none;">
+            <h1 id="question">hello</h1>
+            <input id="answer" class="text" type="number" placeholder="answer"></input>
+            <button id="submitButton">Submit</button> 
+        </div>
+        <div id="correct" style="display: none;">
+            <h1>Correct!✅ </h1>
+            <button id="continueButton">Continue</button>
+        
+        </div>
+        <div id="incorrect" style="display: none;">
+            <h1>Incorrect!❌</h1>
+            <button id="restartButton">Restart</button>
+        </div>
+    </body>
+    <script>
+
+    const MathOperations = Object.freeze({
+        ADD: 0,
+        SUBTRACT_NEG: 1,
+        SUBTRACT: 2,
+        MULTIPLY: 3,
+    });
+
+        var d = document
+        var startButton = d.getElementById("startButton");
+        var submitButton = d.getElementById("submitButton")
+        var randNum = function(min,max) {
+            return Math.floor((Math.random() * (max - min)) + min)
+        }
+        var output = d.getElementById("question");
+        var startPage = d.getElementById("start");
+        var mainPage = d.getElementById("main")
+        var correctPage = d.getElementById("correct")
+        var incorrectPage = d.getElementById("incorrect")
+        var continueButton = d.getElementById("continueButton")
+        var restartButton = d.getElementById("restartButton")
+        var onStart = function() {
+        var textMin = d.getElementById("min");
+        window.Min = parseFloat(textMin.value);
+        var textMax = d.getElementById("max");
+        window.Max = parseFloat(textMax.value);
+        var operationSelector = d.getElementById("operation");
+        window.questionInfo = {
+            operation: operationSelector.value,
+            num1: randNum(Min,Max),
+            num2: randNum(Min,Max),
+            calcValue: function() {
+                if (parseFloat(this.operation) === MathOperations.ADD) {
+                    return this.num1 + this.num2;
+                } else if (parseFloat(this.operation) === MathOperations.SUBTRACT_NEG) {
+                    return this.num1 - this.num2;
+                } else if (parseFloat(this.operation) === MathOperations.SUBTRACT) {
+                    while (true) {
+                        if (this.num1 - this.num2 >= 0) {
+                            return this.num1 - this.num2
+                        } else {
+                            this.num1 = randNum(Min,Max)
+                            this.num2 = randNum(Min,Max)
+                        }
+                    }
+                } else if (parseFloat(this.operation) === MathOperations.MULTIPLY) {
+                    return this.num1 * this.num2;
+                } else {
+                    console.log("An Error Occured when Calculating the Expression");
+                };
+                    
+            },
+            calcEquation: function() {
+                if (parseFloat(this.operation) === MathOperations.ADD) {
+                    return this.num1.toString() + " + " + this.num2.toString();
+                } else if (parseFloat(this.operation) === MathOperations.SUBTRACT_NEG) {
+                    return this.num1.toString() + " - " + this.num2.toString();
+                } else if (parseFloat(this.operation) === MathOperations.SUBTRACT) {
+                    while (true) {
+                        if (this.num1 - this.num2 > 0) {
+                            return this.num1 + " - " + this.num2
+                        } else {
+                            this.num1 = randNum(Min,Max)
+                            this.num2 = randNum(Min,Max)
+                        }
+                    }
+                } else if (parseFloat(this.operation) === MathOperations.MULTIPLY) {
+                    return this.num1.toString() + " x " + this.num2.toString();
+                }
+            }
+                
+        };
+            output.textContent = questionInfo.calcEquation()
+            mainPage.style.display = "block";
+            startPage.style.display = "none";
+            correctPage.style.display = "none";
+            
+        };
+        var answer = d.getElementById("answer")
+        var onSubmit = function() {
+            
+            if (parseFloat(answer.value) === questionInfo.calcValue()) {
+                mainPage.style.display = "none"
+                correctPage.style.display = "block";
+            } else {
+                mainPage.style.display = "none"
+                incorrectPage.style.display = "block";
+            };
+        };
+        var onContinue = function() {
+            questionInfo.num1 = randNum(Min,Max);
+            questionInfo.num2 = randNum(Min,Max);
+            output.textContent = questionInfo.calcEquation();
+            answer.value = "";
+            mainPage.style.display = "block"
+            correctPage.style.display = "none";
+        };
+        var onRestart = function() {
+            answer.value = "";
+            incorrectPage.style.display = "none"
+            startPage.style.display = "block"
+        }
+        startButton.addEventListener("click",onStart);
+        submitButton.addEventListener("click",onSubmit);
+        continueButton.addEventListener("click",onContinue);
+        restartButton.addEventListener("click",onRestart)    
+    </script>
+</html>
