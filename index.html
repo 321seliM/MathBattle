@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Game</title>
+        <title>Math Battle</title>
         <style>
             body {
                 text-align: center;
@@ -33,14 +33,17 @@
                 <option value="1">Subtraction w/ Negatives</option>
                 <option value="2">Subtraction</option>
                 <option value="3">Multiplication</option>
+                <option value="4">Division</option>
             </optgroup>
             <!--<optgroup label="Test Operations 
                             (May Not Work Properly)">
             </optgroup> -->
         </select>
         <br>
-        <input class="text" id="min" placeholder="Range min" rows="2" cols="10" type="number"></input>
-        <input class="text" id="max" placeholder="Range max" rows="2" cols="10" type="number"></input>
+        <input class="text" id="min1" placeholder="Num 1 Range Min" rows="2" cols="10" type="number"></input>
+        <input class="text" id="max1" placeholder="Num 1 Range Max" rows="2" cols="10" type="number"></input>
+        <input class="text" id="min2" placeholder="Num 2 Range Min" rows="2" cols="10" type="number"></input>
+        <input class="text" id="max2" placeholder="Num 2 Range Max" rows="2" cols="10" type="number"></input>
         </div>
         <div id="main" style="display: none;">
             <h1 id="question">hello</h1>
@@ -64,6 +67,7 @@
         SUBTRACT_NEG: 1,
         SUBTRACT: 2,
         MULTIPLY: 3,
+        DIVIDE: 4,
     });
 
         var d = document
@@ -80,16 +84,21 @@
         var continueButton = d.getElementById("continueButton")
         var restartButton = d.getElementById("restartButton")
         var onStart = function() {
-        var textMin = d.getElementById("min");
-        window.Min = parseFloat(textMin.value);
-        var textMax = d.getElementById("max");
-        window.Max = parseFloat(textMax.value);
+        var textMin1 = d.getElementById("min1");
+        window.Min1 = parseFloat(textMin1.value);
+        var textMax1 = d.getElementById("max1");
+        window.Max1 = parseFloat(textMax1.value);
+        var textMin2 = d.getElementById("min2");
+        window.Min2 = parseFloat(textMin2.value);
+        var textMax2 = d.getElementById("max2");
+        window.Max2 = parseFloat(textMax2.value);
         var operationSelector = d.getElementById("operation");
         window.questionInfo = {
             operation: operationSelector.value,
-            num1: randNum(Min,Max),
-            num2: randNum(Min,Max),
+            num1: randNum(Min1,Max1),
+            num2: randNum(Min2,Max2),
             calcValue: function() {
+                
                 if (parseFloat(this.operation) === MathOperations.ADD) {
                     return this.num1 + this.num2;
                 } else if (parseFloat(this.operation) === MathOperations.SUBTRACT_NEG) {
@@ -105,12 +114,15 @@
                     }
                 } else if (parseFloat(this.operation) === MathOperations.MULTIPLY) {
                     return this.num1 * this.num2;
-                } else {
+                } else if (parseFloat(this.operation) === MathOperations.DIVIDE) {
+                    return this.num1 / this.num2;
+                } else if  (this.num1 = NaN ){
                     console.log("An Error Occured when Calculating the Expression");
                 };
                     
             },
             calcEquation: function() {
+                if (isNaN(this.num1)) {return "ERROR 101"}
                 if (parseFloat(this.operation) === MathOperations.ADD) {
                     return this.num1.toString() + " + " + this.num2.toString();
                 } else if (parseFloat(this.operation) === MathOperations.SUBTRACT_NEG) {
@@ -126,7 +138,18 @@
                     }
                 } else if (parseFloat(this.operation) === MathOperations.MULTIPLY) {
                     return this.num1.toString() + " x " + this.num2.toString();
+                } else if (parseFloat(this.operation) === MathOperations.DIVIDE) {
+                    while (true) {
+                        if ((this.num1 / this.num2) % 1 === 0) {
+                            return this.num1 + "÷" + this.num2
+                        } else {
+                            this.num1 = randNum(Min,Max)
+                            this.num2 = randNum(Min,Max)
+                        }
+                    }
+                    
                 }
+                
             }
                 
         };
@@ -148,8 +171,8 @@
             };
         };
         var onContinue = function() {
-            questionInfo.num1 = randNum(Min,Max);
-            questionInfo.num2 = randNum(Min,Max);
+            questionInfo.num1 = randNum(Min1,Max1);
+            questionInfo.num2 = randNum(Min2,Max2);
             output.textContent = questionInfo.calcEquation();
             answer.value = "";
             mainPage.style.display = "block"
